@@ -87,3 +87,7 @@ parallel
 pretty 
 
 terminfo 
+
+time
+
+transformers
