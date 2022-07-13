@@ -1,4 +1,4 @@
-module Data.List.Extra(
+module Data.List.Swiss(
     module Data.List,
     replace,
     ) where
