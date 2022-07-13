@@ -6,6 +6,10 @@
 
 module Swiss where
 
+
 import Data.Char.Swiss
 import Data.List.Swiss
 import Data.Maybe.Swiss
+import Data.Time.Swiss
+import Data.Tuple.Swiss
+import GHC.Show.Swiss
