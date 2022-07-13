@@ -12,23 +12,23 @@ https://downloads.haskell.org/~ghc/latest/docs/html/libraries/
 
 
 
-Haskell Core Libraries + base lbrary (GHC ver. 9.2.2)
+Haskell Core Libraries + base library (GHC ver. 9.2.2)
 ======================================================
-array,
-base,
-bytestring,
-deepseq,
-directory,
-filepath,
-mtl,
-primitive,
-process,
-random,
-stm,
-template-haskell,
-text,
-unix,
-vector,
+array
+base
+bytestring
+deepseq
+directory
+filepath
+mtl
+primitive
+process
+random
+stm
+template-haskell
+text
+unix
+vector
 Win32
 
 GHC Boot Libraries (GHC ver. 9.2.2)
