@@ -3,7 +3,7 @@ module Data.List.Swiss(
     replace,
     ) where
     
-import Partial    
+
 import Data.List
 
 
@@ -12,7 +12,7 @@ import Data.List
 --
 -- > replace "el" "_" "Hello Kelly" == "H_lo K_ly"
 -- > replace "ll" "r" "Hello"       == "Hero"
-replace :: (Partial, Eq a) => [a] -> [a] -> [a] -> [a]
+replace :: Eq a => [a] -> [a] -> [a] -> [a]
 replace [] _ _ = error "Swiss.replace, first argument cannot be empty"
 replace old new [] = []
 replace old new xs
