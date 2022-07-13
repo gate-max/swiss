@@ -1,95 +1,106 @@
 
 module Data.Char.Swiss 
     (module Data.Char,
-    notAlpha, notAlphaNum,
+    notAlpha, notAlphaNum, notAscii, notAsciiLower, notAsciiUpper, 
     notControl,
-    notLower,
-    notUpper,
-
-
+    notDigit,
+    notHexDigit,
+    notLatin1, notLetter, notLower
+    notMark,
+    notNumber,
+    notOctDigit,
+    notPrint, notPunctuation
+    notSeparator, notSpace, notSymbol
+    notUpper
     )where
 
 import Data.Char (isControl, isSpace, isLower, isUpper, isAlpha, isAlphaNum, isPrint
-       , isDigit, isOctDigit, isHexDigit, isLetter, isMark, isNumber, isPunctuation
-       , isSymbol, isSeparator, isAscii, isLatin1, isAsciiUpper, isAsciiLower)
+    , isDigit, isOctDigit, isHexDigit, isLetter, isMark, isNumber, isPunctuation
+    , isSymbol, isSeparator, isAscii, isLatin1, isAsciiUpper, isAsciiLower)
+
+
+notAlpha :: Char -> Bool
+notAlpha = not . isAlpha
+
+
+notAlphaNum :: Char -> Bool
+notAlphaNum = not . isAlphaNum
+
+
+
+notAscii :: Char -> Bool
+notAscii = not . isAscii
+
+
+notAsciiLower :: Char -> Bool
+notAsciiLower = not . isAsciiLower
+
+
+notAsciiUpper :: Char -> Bool
+notAsciiUpper = not . isAsciiUpper
 
 
 
 notControl :: Char -> Bool
 notControl = not . isControl
 
+notDigit :: Char -> Bool
+notDigit = not . isDigit
 
-notSpace :: Char -> Bool
-notSpace = not . isSpace
+
+
+notHexDigit :: Char -> Bool
+notHexDigit = not . isHexDigit
+
+
+notLatin1 :: Char -> Bool
+notLatin1 = not . isLatin1
+
+
+notLetter :: Char -> Bool
+notLetter = not . isLetter
+
 
 
 notLower :: Char -> Bool
 notLower = not . isLower
 
 
+notMark :: Char -> Bool
+notMark = not . isMark
+
+
+notNumber :: Char -> Bool
+notNumber = not . isNumber
+
+
+notOctDigit :: Char -> Bool
+notOctDigit = not . isOctDigit
+
+
+
+notPrint :: Char -> Bool
+notPrint = not . isPrint
+
+notPunctuation :: Char -> Bool
+notPunctuation = not . isPunctuation
+
+
+
+notSeparator :: Char -> Bool
+notSeparator = not . isSeparator
+
+notSpace :: Char -> Bool
+notSpace = not . isSpace
+
+
+notSymbol :: Char -> Bool
+notSymbol = not . isSymbol
+
+
+
 notUpper :: Char -> Bool
 notUpper = not . isUpper
 
 
-isNotAlpha :: Char -> Bool
-isNotAlpha = not . isAlpha
 
-
-isNotAlphaNum :: Char -> Bool
-isNotAlphaNum = not . isAlphaNum
-
-
-isNotPrint :: Char -> Bool
-isNotPrint = not . isPrint
-
-
-isNotDigit :: Char -> Bool
-isNotDigit = not . isDigit
-
-
-isNotOctDigit :: Char -> Bool
-isNotOctDigit = not . isOctDigit
-
-
-isNotHexDigit :: Char -> Bool
-isNotHexDigit = not . isHexDigit
-
-
-isNotLetter :: Char -> Bool
-isNotLetter = not . isLetter
-
-
-isNotMark :: Char -> Bool
-isNotMark = not . isNotMark
-
-
-isNotNumber :: Char -> Bool
-isNotNumber = not . isNotNumber
-
-
-isNotPunctuation :: Char -> Bool
-isNotPunctuation = not . isPunctuation
-
-
-isNotSymbol :: Char -> Bool
-isNotSymbol = not . isSymbol
-
-
-isNotSeparator :: Char -> Bool
-isNotSeparator = not . isSeparator
-
-
-isNotAscii :: Char -> Bool
-isNotAscii = not . isAscii
-
-
-isNotLatin1 :: Char -> Bool
-isNotLatin1 = not . isLatin1
-
-
-isNotAsciiUpper :: Char -> Bool
-isNotAsciiUpper = not . isAsciiUpper
-
-
-isNotAsciiLower :: Char -> Bool
-isNotAsciiLower = not . isAsciiLower
