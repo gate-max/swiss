@@ -1,7 +1,30 @@
 module Data.Tuple.Swiss(
     module Data.Tuple,
     module GHC.Show.Swiss,
-    
+    fmapPair,
+    fmapTuple2,
+    fmapTuple3,
+    fmapTuple4,
+    fmapTuple5,
+    fmapTuple6,
+    fmapTuple7,
+    fmapTuple8,
+    fmapTuple9,
+    fmapTuple10,
+    fmapTuple11,
+    fmapTuple12,
+    mapPair,
+    mapTuple2,
+    mapTuple3,
+    mapTuple4,
+    mapTuple5,
+    mapTuple6,
+    mapTuple7,
+    mapTuple8,
+    mapTuple9,
+    mapTuple10,
+    mapTuple11,
+    mapTuple12,    
     ) where
     
 

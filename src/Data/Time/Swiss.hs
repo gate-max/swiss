@@ -1,6 +1,26 @@
 module Data.Time.Swiss(
     module Data.Time,
-    
+    addTradingDays,
+    dayToStr,
+    dayToUnixtime,
+    exchangeHolidays,
+    federalHolidays,
+    fg,
+    getDay, getMonth, getToday, getTradingDay, getTradingDayUTC, getYear,
+    holidayChristmas, holidayColumbus, holidayGoodFriday, holidayIndependence, holidayLabor, holidayMartinLuther,
+    holidayMemorial, holidayNewYears, holidayThanksgiving, holidayVeterans,
+    isExchangeHoliday, isFederalHoliday, isTradingDay,
+    isWednesday, isThursday, isFriday, isSaturday, isSunday, isMonday, isTuesday,
+    isWeekday, isWeeklyClose,
+    lastTuesday, lastMonday, lastSunday, lastSaturday, lastFriday, lastThursday, lastWednesday,
+    nextTradingDay,
+    nextWednesday, nextTuesday, nextMonday, nextSunday, nextSaturday, nextFriday, nextThursday,
+    notExchangeHoliday, notFederalHoliday, notTradingDay,
+    notWednesday, notThursday, notFriday, notSaturday, notSunday, notMonday, notTuesday,
+    notWeekday, notWeeklyClose, 
+    previousTradingDay,
+    showGreg,
+    unixtimeToDay,
     ) where
     
 
@@ -28,32 +48,6 @@ dayToStr = filter (isDigit) . show
 dayToUnixtime :: Day -> Integer
 dayToUnixtime day = (toModifiedJulianDay day - 40587) * 86400
 
-fg :: Integer -> Int -> Int -> Day
-fg = fromGregorian
-  
-getDay :: Day -> Int
-getDay day = d where (_,_,d) = toGregorian day
-
-getMonth :: Day -> Int
-getMonth day = m where (_,m,_) = toGregorian day 
-
-getYear :: Day -> Integer
-getYear day = y where (y,_,_) = toGregorian day
-
--- | This is the current GMT day
-getToday :: IO Day
-getToday = utctDay <$> getCurrentTime
-
-getTradingDay :: IO Day
-getTradingDay = previousTradingDay <$> getToday
-
-getTradingDayUTC :: IO (Day, UTCTime)
-getTradingDayUTC = do
-    utc <- getCurrentTime
-    let trading_day = previousTradingDay . utctDay $ utc
-    return (trading_day, utc) 
-
-
 -- | this is actually CME Exchange Holiday, which includes Good Friday, while Federal holiday not
 exchangeHolidays :: Integer -> [Day]
 exchangeHolidays year = federalHolidays year ++ [holidayGoodFriday year]
@@ -73,6 +67,30 @@ federalHolidays year
             , holidayColumbus year, holidayVeterans year, holidayThanksgiving year, holidayChristmas year]
 
 
+fg :: Integer -> Int -> Int -> Day
+fg = fromGregorian
+  
+getDay :: Day -> Int
+getDay day = d where (_,_,d) = toGregorian day
+
+getMonth :: Day -> Int
+getMonth day = m where (_,m,_) = toGregorian day 
+
+-- | This is the current GMT day
+getToday :: IO Day
+getToday = utctDay <$> getCurrentTime
+
+getTradingDay :: IO Day
+getTradingDay = previousTradingDay <$> getToday
+
+getTradingDayUTC :: IO (Day, UTCTime)
+getTradingDayUTC = do
+    utc <- getCurrentTime
+    let trading_day = previousTradingDay . utctDay $ utc
+    return (trading_day, utc) 
+
+getYear :: Day -> Integer
+getYear day = y where (y,_,_) = toGregorian day
 
 
 
@@ -139,41 +157,28 @@ holidayChristmas year
   where dec25 = fromGregorian year 12 25
 
 
-isWednesday,isThursday,isFriday,isSaturday,isSunday,isMonday,isTuesday :: Day -> Bool
-[isWednesday,isThursday,isFriday,isSaturday,isSunday,isMonday,isTuesday] = [isDay i | i <- [0 .. 6]]
-    where isDay :: Integer -> Day -> Bool
-          isDay i day = toModifiedJulianDay day `mod` 7 == i
-
 
 isExchangeHoliday :: Day -> Bool
 isExchangeHoliday day = day `elem` (exchangeHolidays $ getYear day)
-
-notExchangeHoliday :: Day -> Bool
-notExchangeHoliday = not . isExchangeHoliday
 
 
 -- | New Years Day might be Saturady and falls into 31 Dec, see year 2010 
 isFederalHoliday :: Day -> Bool
 isFederalHoliday day = day `elem` (federalHolidays $ getYear day)
 
-notFederalHoliday :: Day -> Bool
-notFederalHoliday = not . isFederalHoliday 
-
 
 isTradingDay :: Day -> Bool
 isTradingDay day = not (isSunday day || isSaturday day || isExchangeHoliday day)
 
-notTradingDay :: Day -> Bool
-notTradingDay = not . isTradingDay 
 
+
+isWednesday,isThursday,isFriday,isSaturday,isSunday,isMonday,isTuesday :: Day -> Bool
+[isWednesday,isThursday,isFriday,isSaturday,isSunday,isMonday,isTuesday] = [isDay i | i <- [0 .. 6]]
+    where isDay :: Integer -> Day -> Bool
+          isDay i day = toModifiedJulianDay day `mod` 7 == i
 
 isWeekday :: Day -> Bool
 isWeekday day = not (isSaturday day || isSunday day)
-
-notWeekday :: Day -> Bool
-notWeekday day = isSaturday day || isSunday day
-
-
 
 
 isWeeklyClose :: Day -> Bool
@@ -183,16 +188,19 @@ isWeeklyClose day
     | otherwise = False
     where tomorrow = succ day
 
-notWeeklyClose :: Day -> Bool
-notWeeklyClose = not . isWeeklyClose 
-
-
-
 
 lastTuesday,lastMonday,lastSunday,lastSaturday,lastFriday,lastThursday,lastWednesday :: Day -> Day
 [lastTuesday,lastMonday,lastSunday,lastSaturday,lastFriday,lastThursday,lastWednesday] = [lastDay i | i <- [0 .. 6]]
     where lastDay :: Integer -> Day -> Day
           lastDay i day =  addDays ((negate $ (toModifiedJulianDay day + i) `mod` 7) - 1) day
+
+nextTradingDay :: Day -> Day
+nextTradingDay day
+  | isTradingDay tomorrow = tomorrow  
+  | otherwise = nextTradingDay tomorrow
+  where tomorrow = succ day
+
+
 
 nextWednesday,nextTuesday,nextMonday,nextSunday,nextSaturday,nextFriday,nextThursday :: Day -> Day
 [nextWednesday,nextTuesday,nextMonday,nextSunday,nextSaturday,nextFriday,nextThursday] = [nextDay i | i <- [0 .. 6]]
@@ -200,11 +208,34 @@ nextWednesday,nextTuesday,nextMonday,nextSunday,nextSaturday,nextFriday,nextThur
           nextDay i day = addDays (7 - (toModifiedJulianDay day + i) `mod` 7) day  
 
   
-nextTradingDay :: Day -> Day
-nextTradingDay day
-  | isTradingDay tomorrow = tomorrow  
-  | otherwise = nextTradingDay tomorrow
-  where tomorrow = succ day
+
+
+notExchangeHoliday :: Day -> Bool
+notExchangeHoliday = not . isExchangeHoliday
+
+
+notFederalHoliday :: Day -> Bool
+notFederalHoliday = not . isFederalHoliday 
+
+
+notTradingDay :: Day -> Bool
+notTradingDay = not . isTradingDay 
+
+notWednesday, notThursday, notFriday, notSaturday, notSunday, notMonday, notTuesday :: Day -> Bool
+[notWednesday,notThursday,notFriday,notSaturday,notSunday,notMonday,notTuesday] = [notDay i | i <- [0 .. 6]]
+    where notDay :: Integer -> Day -> Bool
+          notDay i day = toModifiedJulianDay day `mod` 7 /= i
+
+
+notWeekday :: Day -> Bool
+notWeekday day = isSaturday day || isSunday day
+
+
+
+notWeeklyClose :: Day -> Bool
+notWeeklyClose = not . isWeeklyClose 
+
+
 
 previousTradingDay :: Day -> Day
 previousTradingDay day
