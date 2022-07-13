@@ -30,5 +30,7 @@ library
 
     exposed-modules:
         Swiss
+        Data.Char.Swiss
         Data.List.Swiss
+        Data.Maybe.Swiss
         

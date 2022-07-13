@@ -1,23 +1,28 @@
 
 module Data.Char.Swiss 
     (module Data.Char,
+    isEnglish,
     notAlpha, notAlphaNum, notAscii, notAsciiLower, notAsciiUpper, 
     notControl,
     notDigit,
+    notEnglish,
     notHexDigit,
-    notLatin1, notLetter, notLower
+    notLatin1, notLetter, notLower,
     notMark,
     notNumber,
     notOctDigit,
-    notPrint, notPunctuation
-    notSeparator, notSpace, notSymbol
-    notUpper
+    notPrint, notPunctuation,
+    notSeparator, notSpace, notSymbol,
+    notUpper,
     )where
 
 import Data.Char (isControl, isSpace, isLower, isUpper, isAlpha, isAlphaNum, isPrint
     , isDigit, isOctDigit, isHexDigit, isLetter, isMark, isNumber, isPunctuation
     , isSymbol, isSeparator, isAscii, isLatin1, isAsciiUpper, isAsciiLower)
 
+-- | Ascii letters
+isEnglish :: Char -> Bool
+isEnglish c = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 
 notAlpha :: Char -> Bool
 notAlpha = not . isAlpha
@@ -47,6 +52,9 @@ notControl = not . isControl
 notDigit :: Char -> Bool
 notDigit = not . isDigit
 
+
+notEnglish :: Char -> Bool
+notEnglish = not . isEnglish
 
 
 notHexDigit :: Char -> Bool
