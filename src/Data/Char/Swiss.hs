@@ -1,7 +1,6 @@
 
 module Data.Char.Swiss 
-    (module Data.Char,
-    isEnglish,
+    (isEnglish,
     notAlpha, notAlphaNum, notAscii, notAsciiLower, notAsciiUpper, 
     notControl,
     notDigit,
@@ -20,7 +19,7 @@ import Data.Char (isControl, isSpace, isLower, isUpper, isAlpha, isAlphaNum, isP
     , isDigit, isOctDigit, isHexDigit, isLetter, isMark, isNumber, isPunctuation
     , isSymbol, isSeparator, isAscii, isLatin1, isAsciiUpper, isAsciiLower)
 
--- | Ascii letters
+-- | 52 uppercase and lowercase English letters
 isEnglish :: Char -> Bool
 isEnglish c = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 

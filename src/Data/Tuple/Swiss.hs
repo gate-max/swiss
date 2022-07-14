@@ -1,5 +1,4 @@
 module Data.Tuple.Swiss(
-    module Data.Tuple,
     module GHC.Show.Swiss,
     fmapPair,
     fmapTuple2,

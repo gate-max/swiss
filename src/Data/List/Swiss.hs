@@ -1,7 +1,6 @@
 module Data.List.Swiss(
-    module Data.List,
     (!?),
-    chunksOf,
+    chunksOf, 
     notNull,
     replace, replaceBy, replaceOnce,
     ) where
@@ -23,10 +22,15 @@ infixl 9 !?
     | otherwise = listToMaybe $ drop n xs    
 
 
+
 chunksOf :: Int -> [a] -> [[a]]
-chunksOf i xs 
-    | null xs || i <= 0 = []
-    | otherwise = [take i xs] ++ chunksOf i (drop i xs)
+chunksOf i xs
+    | i <= 0 = []
+    | otherwise = f xs []
+    where f :: [a] -> [[a]] -> [[a]]
+          f [] acc = acc 
+          f ys acc = f (drop i ys) (acc ++ [take i ys])
+
 
 
 notNull :: [a] -> Bool
@@ -38,12 +42,10 @@ notNull = not . null
 -- > replace "ll" "r" "Hello Kelly" == "Hero Kery"
 -- > replace "l" "" "Hello"       == "Heo"
 replace :: Eq a => [a] -> [a] -> [a] -> [a]
-replace [] _ xs = xs
-replace _ _ [] = []
 replace old new xs
+    | null xs || null old = xs
     | Just ys <- stripPrefix old xs = new ++ replace old new ys
-replace old new (x:xs) = x : replace old new xs
-
+    | (h:t) <- xs = h : replace old new t
 
 
 -- | Replace a subsequence one time only. Return the original list if the first argument is empty. 
@@ -51,12 +53,10 @@ replace old new (x:xs) = x : replace old new xs
 -- > replaceOnce "ll" "r" "Hello Kelly" == "Hero Kelly"
 -- > replaceOnce "l" "" "Hello"       == "Helo"
 replaceOnce :: Eq a => [a] -> [a] -> [a] -> [a]
-replaceOnce [] _ xs = xs
-replaceOnce _ _ [] = []
 replaceOnce old new xs
+    | null xs || null old = xs
     | Just ys <- stripPrefix old xs = new ++ ys
-replaceOnce old new (x:xs) = x : replaceOnce old new xs
-
+    | (h:t) <- xs = h : replaceOnce old new t
 
 
 
