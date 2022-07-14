@@ -8,7 +8,7 @@ category:           Development
 author:             Chris Sze <chris@gate-max.com>
 maintainer:         Chris Sze <chris@gate-max.com>
 copyright:          GATE MAX CORPORATION 2021-2022
-synopsis:           Basic functions for development with Core libraries and GHC boot libraries dependencies.
+synopsis:           Basic functions for development
 description:
     A library of extra functions for the standard Haskell Core libraries.
 homepage:           https://github.com/gate-max/swiss
@@ -27,7 +27,8 @@ library
     hs-source-dirs: src
     build-depends:
         base          >= 4.16.2 && < 6,
-        bytestring    >= 0.11.3 && < 1,
+        bytestring    >= 0.11.3 && < 2,
+        deepseq       >= 1.4.6 && < 3,
         parallel      >= 3.2.2 && < 5, 
         time          >= 1.11.1 && < 3
 
