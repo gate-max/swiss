@@ -1,5 +1,4 @@
-module Data.Time.Swiss(
-    module Data.Time,
+module Data.Time.Swiss (
     addTradingDays,
     dayToStr,
     dayToUnixtime,
@@ -20,6 +19,7 @@ module Data.Time.Swiss(
     notWeekday, notWeeklyClose, 
     previousTradingDay,
     showGreg,
+    timer, timerIO, timerPure,
     unixtimeToDay,
     ) where
     
@@ -247,6 +247,46 @@ previousTradingDay day
 -- > dayToString (fromGregorian 2016 3 14) --> "20160314"
 showGreg :: Day -> String
 showGreg = filter (isDigit) . show
+
+
+-- | use 'timer' for inline coding
+--
+--   > ghci> :m + Dimsum.Control.Tools
+--   > ghci> :m + Network.HTTP.Conduit
+--   > ghci Dimsum.Control.Tools Network.HTTP.Conduit> timer $ take 16 . show <$> simpleHttp "http://www.yahoo.com"
+--   > Output: ("\"<!DOCTYPE html>",0.973127378s)
+timer :: IO t -> IO (t, NominalDiffTime)
+timer action = do
+  start <- getCurrentTime
+  result <- action
+  end <- getCurrentTime
+  let elapsed_time = end `diffUTCTime` start
+  return (result, elapsed_time)
+
+
+-- | use 'timerIO' in ghci
+-- > ghci> timerIO . print $ sum [1..1000000]
+-- > Output:
+-- > 500000500000
+-- > 0.592073825s elapsed.
+timerIO :: IO a -> IO ()
+timerIO action = do
+  start <- getCurrentTime
+  action
+  end <- getCurrentTime
+  putStrLn $ show (end `diffUTCTime` start) ++ " elapsed."
+
+
+-- | use 'timerPure' in ghci
+--
+-- Example 1:
+--
+-- > ghci> timerPure $ sum [1..1000000]
+-- > Output:
+-- > 500000500000
+-- > 0.592073825s elapsed.
+timerPure :: Show a => a -> IO ()
+timerPure = timerIO . print
 
 
 -- 1 day has 86400 seconds
