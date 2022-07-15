@@ -21,7 +21,7 @@ import Data.Char (isControl, isSpace, isLower, isUpper, isAlpha, isAlphaNum, isP
 
 -- | 52 uppercase and lowercase English letters
 isEnglish :: Char -> Bool
-isEnglish c = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+isEnglish c = isAsciiLower c || isAsciiUpper c
 
 notAlpha :: Char -> Bool
 notAlpha = not . isAlpha

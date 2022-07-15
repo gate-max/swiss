@@ -11,13 +11,9 @@ module Data.Read.Swiss (
     ) where
 
 import           Data.Char.Swiss (notAlpha, notDigit)
-
-import           Data.List.Swiss (replaceOnce) 
-
-
 import           Data.Char (isAlpha, isDigit, toLower, toUpper)
 import           Data.List (intercalate)
-import           Data.List.Swiss (chunksOf)  --split
+import           Data.List.Swiss (chunksOf, replaceOnce)
 import           Data.Maybe (fromJust, fromMaybe, isJust)
 import           Data.Time.Calendar (Day, fromGregorian)  --time
 import           Text.Printf (printf)

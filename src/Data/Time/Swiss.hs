@@ -42,7 +42,7 @@ addTradingDays i day
 
 -- | > dayToString (mkDay 2016 3 14) --> "20160314"
 dayToStr :: Day -> String
-dayToStr = filter (isDigit) . show
+dayToStr = filter isDigit . show
 
 -- | diffDays (mkDay 1970 1 1) (mkDay 1858 11 17) is 40587; 1 day has 86400 seconds
 -- compare: unixtimeToDay
@@ -64,8 +64,8 @@ federalHolidays year
     | otherwise         = thisYearFederalHolidays  
     where nextYearJan1isSat = isSaturday $ mkDay (year + 1) 1 1 
           thisYearFederalHolidays =  [holidayNewYears year, holidayMartinLuther year, holidayWashington year,
-          holidayMemorial year, holidayIndependence year, holidayLabor year,
-          holidayColumbus year, holidayVeterans year, holidayThanksgiving year, holidayChristmas year]
+              holidayMemorial year, holidayIndependence year, holidayLabor year,
+              holidayColumbus year, holidayVeterans year, holidayThanksgiving year, holidayChristmas year]
 
 
   
@@ -158,12 +158,12 @@ holidayChristmas year
 
 
 isExchangeHoliday :: Day -> Bool
-isExchangeHoliday day = day `elem` (exchangeHolidays $ getYear day)
+isExchangeHoliday day = day `elem` exchangeHolidays (getYear day)
 
 
 -- | New Years Day might be Saturady and falls into 31 Dec, see year 2010 
 isFederalHoliday :: Day -> Bool
-isFederalHoliday day = day `elem` (federalHolidays $ getYear day)
+isFederalHoliday day = day `elem` federalHolidays (getYear day)
 
 
 isTradingDay :: Day -> Bool
@@ -191,7 +191,7 @@ isWeeklyClose day
 lastTuesday,lastMonday,lastSunday,lastSaturday,lastFriday,lastThursday,lastWednesday :: Day -> Day
 [lastTuesday,lastMonday,lastSunday,lastSaturday,lastFriday,lastThursday,lastWednesday] = [lastDay i | i <- [0 .. 6]]
     where lastDay :: Integer -> Day -> Day
-          lastDay i day =  addDays ((negate $ (toModifiedJulianDay day + i) `mod` 7) - 1) day
+          lastDay i day =  addDays (negate ((toModifiedJulianDay day + i) `mod` 7) - 1) day
 
 
 mkDay :: Integer -> Int -> Int -> Day
@@ -250,7 +250,7 @@ previousTradingDay day
 -- | compare showGregorian
 -- > dayToString (mkDay 2016 3 14) --> "20160314"
 showGreg :: Day -> String
-showGreg = filter (isDigit) . show
+showGreg = filter isDigit . show
 
 
 -- | use 'timer' for inline coding

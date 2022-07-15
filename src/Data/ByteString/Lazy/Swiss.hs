@@ -27,7 +27,7 @@ infix 5 \\
 -- > delete 'c' "" --> ""
 delete :: Char -> L.ByteString -> L.ByteString
 delete _ L.Empty = L.Empty
-delete c bs = one `L.append` (L.drop 1 two)
+delete c bs = one `L.append` L.drop 1 two
     where  (one,two) = L.break (==c) bs
 
 

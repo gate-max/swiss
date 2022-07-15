@@ -63,4 +63,4 @@ replaceOnce old new xs
 -- | > replaceBy (=='b') 'l' "book" --> "look"
 --   > replaceBy (<0) 0 [-4,-5,7] --> [0,0,7]
 replaceBy :: (a -> Bool) -> a -> [a] -> [a]
-replaceBy f new xs = map (\x -> if f x then new else x) xs
+replaceBy f new = map (\x -> if f x then new else x)

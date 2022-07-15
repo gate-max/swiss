@@ -38,5 +38,5 @@ trys x = do
   v <- try x
   case v of
     Right x -> return x
-    Left (SomeException e) -> return $ (show $ typeOf e) ++ "\n"  
+    Left (SomeException e) -> return $ show (typeOf e) ++ "\n"  
 
