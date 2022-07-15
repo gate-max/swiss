@@ -35,10 +35,10 @@ import           Data.Time.Calendar.Easter (gregorianEaster)
 
 
 addTradingDays :: Integral i => i -> Day -> Day
-addTradingDays n day
-  | n == 0 = day
-  | n > 0 = nextTradingDay $ addTradingDays (n - 1) day 
-  | otherwise = previousTradingDay $ addTradingDays (n + 1) day  -- n < 0
+addTradingDays i day
+  | i == 0 = day
+  | i > 0 = nextTradingDay $ addTradingDays (i - 1) day 
+  | i < 0 = previousTradingDay $ addTradingDays (i + 1) day
 
 -- | > dayToString (mkDay 2016 3 14) --> "20160314"
 dayToStr :: Day -> String
