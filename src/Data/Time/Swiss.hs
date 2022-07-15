@@ -36,9 +36,9 @@ import           Data.Time.Calendar.Easter (gregorianEaster)
 
 addTradingDays :: Integral i => i -> Day -> Day
 addTradingDays i day
-  | i == 0 = day
-  | i > 0 = nextTradingDay $ addTradingDays (i - 1) day 
-  | i < 0 = previousTradingDay $ addTradingDays (i + 1) day
+    | i == 0 = day
+    | i > 0 = nextTradingDay $ addTradingDays (i - 1) day 
+    | i < 0 = previousTradingDay $ addTradingDays (i + 1) day
 
 -- | > dayToString (mkDay 2016 3 14) --> "20160314"
 dayToStr :: Day -> String
@@ -60,12 +60,12 @@ exchangeHolidays year = federalHolidays year ++ [holidayGoodFriday year]
 -- https://www.opm.gov/policy-data-oversight/snow-dismissal-procedures/federal-holidays/
 federalHolidays :: Integer -> [Day]
 federalHolidays year
-  | nextYearJan1isSat = thisYearFederalHolidays ++ [mkDay year 12 31] 
-  | otherwise         = thisYearFederalHolidays  
-  where nextYearJan1isSat = isSaturday $ mkDay (year + 1) 1 1 
-        thisYearFederalHolidays =  [holidayNewYears year, holidayMartinLuther year, holidayWashington year
-            , holidayMemorial year, holidayIndependence year, holidayLabor year
-            , holidayColumbus year, holidayVeterans year, holidayThanksgiving year, holidayChristmas year]
+    | nextYearJan1isSat = thisYearFederalHolidays ++ [mkDay year 12 31] 
+    | otherwise         = thisYearFederalHolidays  
+    where nextYearJan1isSat = isSaturday $ mkDay (year + 1) 1 1 
+          thisYearFederalHolidays =  [holidayNewYears year, holidayMartinLuther year, holidayWashington year,
+          holidayMemorial year, holidayIndependence year, holidayLabor year,
+          holidayColumbus year, holidayVeterans year, holidayThanksgiving year, holidayChristmas year]
 
 
   
@@ -97,10 +97,10 @@ getYear day = y where (y,_,_) = toGregorian day
 -- | New Year's Day is fixed at January 1st, falls to Dec 31 if Saturday
 holidayNewYears :: Integer -> Day
 holidayNewYears year
-  | isSaturday jan1 = pred $ jan1
-  | isSunday jan1   = mkDay year 1 2
-  | otherwise       = jan1
-  where jan1 = mkDay year 1 1
+    | isSaturday jan1 = pred $ jan1
+    | isSunday jan1   = mkDay year 1 2
+    | otherwise       = jan1
+    where jan1 = mkDay year 1 1
   
 -- | Martin Luther Day is the third Monday in January
 holidayMartinLuther :: Integer -> Day
@@ -122,10 +122,10 @@ holidayMemorial year  = lastMonday (mkDay year 6 1)
 -- | Independence Day is fixed at July 4th
 holidayIndependence :: Integer -> Day
 holidayIndependence year
-  | isSaturday july4 = mkDay year 7 3
-  | isSunday july4   = mkDay year 7 5
-  | otherwise        = july4
-  where july4 = mkDay year 7 4
+    | isSaturday july4 = mkDay year 7 3
+    | isSunday july4   = mkDay year 7 5
+    | otherwise        = july4
+    where july4 = mkDay year 7 4
   
 -- | Labor Day is the first Monday in September
 holidayLabor :: Integer -> Day
@@ -138,10 +138,10 @@ holidayColumbus year  = nextMonday (mkDay year 10 7)
 -- | Veterans Day is fixed at November 11th
 holidayVeterans :: Integer -> Day
 holidayVeterans year
-  | isSaturday nov11 = mkDay year 11 10
-  | isSunday nov11   = mkDay year 11 12
-  | otherwise        = nov11
-  where nov11 = mkDay year 11 11
+    | isSaturday nov11 = mkDay year 11 10
+    | isSunday nov11   = mkDay year 11 12
+    | otherwise        = nov11
+    where nov11 = mkDay year 11 11
   
 -- | Thanksgiving Day is the fourth Thursday in November
 holidayThanksgiving :: Integer -> Day
@@ -150,10 +150,10 @@ holidayThanksgiving year  = nextThursday (mkDay year 11 21)
 -- | Christmas Day is fixed at December 25th
 holidayChristmas :: Integer -> Day
 holidayChristmas year
-  | isSaturday dec25 = mkDay year 12 24
-  | isSunday dec25   = mkDay year 12 26
-  | otherwise        = dec25
-  where dec25 = mkDay year 12 25
+    | isSaturday dec25 = mkDay year 12 24
+    | isSunday dec25   = mkDay year 12 26
+    | otherwise        = dec25
+    where dec25 = mkDay year 12 25
 
 
 
@@ -200,9 +200,9 @@ mkDay = fromGregorian
 
 nextTradingDay :: Day -> Day
 nextTradingDay day
-  | isTradingDay tomorrow = tomorrow  
-  | otherwise = nextTradingDay tomorrow
-  where tomorrow = succ day
+    | isTradingDay tomorrow = tomorrow  
+    | otherwise = nextTradingDay tomorrow
+    where tomorrow = succ day
 
 
 
@@ -243,9 +243,9 @@ notWeeklyClose = not . isWeeklyClose
 
 previousTradingDay :: Day -> Day
 previousTradingDay day
-  | isTradingDay yesterday = yesterday  
-  | otherwise = previousTradingDay yesterday
-  where yesterday = pred day
+    | isTradingDay yesterday = yesterday  
+    | otherwise = previousTradingDay yesterday
+    where yesterday = pred day
 
 -- | compare showGregorian
 -- > dayToString (mkDay 2016 3 14) --> "20160314"
@@ -261,11 +261,11 @@ showGreg = filter (isDigit) . show
 --   > Output: ("\"<!DOCTYPE html>",0.973127378s)
 timer :: IO t -> IO (t, NominalDiffTime)
 timer action = do
-  start <- getCurrentTime
-  result <- action
-  end <- getCurrentTime
-  let elapsed_time = end `diffUTCTime` start
-  return (result, elapsed_time)
+    start <- getCurrentTime
+    result <- action
+    end <- getCurrentTime
+    let elapsed_time = end `diffUTCTime` start
+    return (result, elapsed_time)
 
 
 -- | use 'timerIO' in ghci
@@ -275,10 +275,10 @@ timer action = do
 -- > 0.592073825s elapsed.
 timerIO :: IO a -> IO ()
 timerIO action = do
-  start <- getCurrentTime
-  action
-  end <- getCurrentTime
-  putStrLn $ show (end `diffUTCTime` start) ++ " elapsed."
+    start <- getCurrentTime
+    action
+    end <- getCurrentTime
+    putStrLn $ show (end `diffUTCTime` start) ++ " elapsed."
 
 
 -- | use 'timerPure' in ghci
