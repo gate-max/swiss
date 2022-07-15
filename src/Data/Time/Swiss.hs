@@ -97,7 +97,7 @@ getYear day = y where (y,_,_) = toGregorian day
 -- | New Year's Day is fixed at January 1st, falls to Dec 31 if Saturday
 holidayNewYears :: Integer -> Day
 holidayNewYears year
-    | isSaturday jan1 = pred $ jan1
+    | isSaturday jan1 = pred jan1
     | isSunday jan1   = mkDay year 1 2
     | otherwise       = jan1
     where jan1 = mkDay year 1 1
