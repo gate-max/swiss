@@ -1,7 +1,8 @@
 module SwissRobot.Writer (
       appendField, appendListToTuple, appendQueryParams, appendShowTuple, appendToRow, appendTupleToList, 
-      incrementWord,
-      repeatWord,
+      composeField, composeListToTuple, composeQueryParams, composeShowTuple, composeToRow, composeTupleToList,
+      incrementEnclosed,
+      replicateEnclosed,
       
 
       ) where
@@ -13,39 +14,44 @@ import           Data.List (intercalate, replicate, transpose)
 
 
 
--- | > incrementWord "(Show x)" 6 -> "(Show x1, Show x2, Show x3, Show x4, Show x5, Show x6)"
---   > incrementWord " x " 4 -> " x1, x2, x3, x4 "  --see spaces around x
---   > incrementWord "[fx]" 3 -> "[fx1, fx2, fx3] "
-incrementWord :: String -> Int -> String
-incrementWord str n = open_mark ++ (intercalate ", " $ zipWith (++) word_list num_list) ++ close_mark
-                      where word_list = replicate n . reverse . drop 1 . reverse . drop 1 $ str
-                            num_list = map show [1..n]
-                            open_mark = take 1 str
-                            close_mark = take 1 . reverse $ str
+-- | > incrementEnclosed 6 "(Show x)"     -> "(Show x1, Show x2, Show x3, Show x4, Show x5, Show x6)"
+--   > incrementEnclosed 4 " x "          -> " x1, x2, x3, x4 "  --see spaces around x
+--   > incrementEnclosed 3 "[fx]"         -> "[fx1, fx2, fx3] "
+incrementEnclosed :: Int -> String -> String
+incrementEnclosed i str = open_mark ++ (intercalate ", " $ zipWith (++) word_list num_list) ++ close_mark
+    where word_list, num_list :: [String]
+          word_list = replicate i . reverse . drop 1 . reverse . drop 1 $ str
+          num_list = map show [1..i]
+          open_mark, close_mark :: String
+          open_mark = take 1 str
+          close_mark = take 1 . reverse $ str
 
 
--- | > repeatWord "(Nothing)" 5       -> "(Nothing, Nothing, Nothing, Nothing, Nothing)"
---   > repeatWord "[1]" 4             -> "[1, 1, 1, 1]"
---   > repeatWord " Maybe Int " 3     -> " Maybe Int, Maybe Int, Maybe Int "  --see spaces around the word
-repeatWord :: String -> Int -> String
-repeatWord str n = open_mark ++ (intercalate ", " word_list) ++ close_mark
-                   where word_list = replicate n . reverse . drop 1 . reverse . drop 1 $ str
-                         open_mark = take 1 str
-                         close_mark = take 1 . reverse $ str
-                            
+-- | > replicateEnclosed 5 "(Nothing)"       -> "(Nothing, Nothing, Nothing, Nothing, Nothing)"
+--   > replicateEnclosed 4 "[1]"             -> "[1, 1, 1, 1]"
+--   > replicateEnclosed 3 " Maybe Int "     -> " Maybe Int, Maybe Int, Maybe Int "  --see spaces around the word
+replicateEnclosed :: Int -> String -> String
+replicateEnclosed i str = open_mark ++ (intercalate ", " word_list) ++ close_mark
+    where word_list :: [String]
+          word_list = replicate i . reverse . drop 1 . reverse . drop 1 $ str
+          open_mark, close_mark :: String
+          open_mark = take 1 str
+          close_mark = take 1 . reverse $ str
+      
 
 
 ----------------------------------------------------------------------------------------------
 
 -- | compare Prelude Library Show instance
+-- > ghci> map composeShowTuple [2..5]
 composeShowTuple :: Int -> String
-composeShowTuple i = concat [ "\n-- | Show Tuple", i' 
-                            , "\ninstance ", incrementWord "(Show x)" i
-                            , "\n        => Show ", incrementWord "(x)" i, " where"
-                            , "\n  showsPrec _ ", incrementWord "(x)" i, " s"
-                            , "\n        = show_tuple ", incrementWord "[shows x]" i, " s"
+composeShowTuple i = concat [ "\n-- | Show ", j, "-Tuple" 
+                            , "\ninstance ", incrementEnclosed i "(Show x)"
+                            , "\n        => Show ", incrementEnclosed i "(x)", " where"
+                            , "\n  showsPrec _ ", incrementEnclosed i "(x)", " s"
+                            , "\n        = show_tuple ", incrementEnclosed i "[shows x]", " s"
                             , "\n\n" ]
-                            where i' = show i
+                            where j = show i
 
 -- |  official pkg only have 1 to 15, max size is 64-tuple (GHC 9.2)
 appendShowTuple :: FilePath -> IO ()
@@ -54,13 +60,13 @@ appendShowTuple path = mapM_ (\i-> appendFile path (composeShowTuple i)) [16..64
 
 -- | for postgresql-simple ToField instance declaration, official pkg only have 1 to 10
 composeToRow :: Int -> String
-composeToRow i = concat [ "\n-- | ToRow", i'
-                        , "\ninstance ", incrementWord "(ToField x)" i
-                        , "\n        => ToRow ", incrementWord "(x)" i, " where"
-                        , "\n  toRow ", incrementWord "(x)" i
-                        , "\n        = ", incrementWord "[toField x]" i
+composeToRow i = concat [ "\n-- | ToRow", j
+                        , "\ninstance ", incrementEnclosed i "(ToField x)"
+                        , "\n        => ToRow ", incrementEnclosed i "(x)", " where"
+                        , "\n  toRow ", incrementEnclosed i "(x)"
+                        , "\n        = ", incrementEnclosed i "[toField x]"
                         , "\n\n" ]
-                        where i' = show i
+                        where j = show i
 
 -- | for postgresql-simple ToField instance declaration, official pkg only have 1 to 10
 appendToRow :: FilePath -> IO ()
@@ -69,13 +75,13 @@ appendToRow path = mapM_ (\i -> appendFile path (composeToRow i)) [11..64]
 
 -- | for mysql-simple QueryParams instance declaration, official pkg only have 2 to 24
 composeQueryParams :: Int -> String
-composeQueryParams i = concat [ "\n-- | QueryParams", i'
-                        , "\ninstance ", incrementWord "(Param x)" i
-                        , "\n        => QueryParams ", incrementWord "(x)" i, " where"
-                        , "\n  renderParams ", incrementWord "(x)" i
-                        , "\n        = ", incrementWord "[render x]" i
+composeQueryParams i = concat [ "\n-- | QueryParams", j
+                        , "\ninstance ", incrementEnclosed i "(Param x)"
+                        , "\n        => QueryParams ", incrementEnclosed i "(x)", " where"
+                        , "\n  renderParams ", incrementEnclosed i "(x)"
+                        , "\n        = ", incrementEnclosed i "[render x]"
                         , "\n\n" ]
-                        where i' = show i
+                        where j = show i
 
 -- | for mysql-simple QueryParams instance declaration, official pkg only have 2 to 24
 appendQueryParams :: FilePath -> IO ()
@@ -87,24 +93,24 @@ appendQueryParams path = mapM_ (\i -> appendFile path (composeQueryParams i)) [2
 
 
 composeListToTuple :: Int -> String
-composeListToTuple i = concat [ "\n", "listToTuple", i', " :: [a] -> ", repeatWord "(Maybe a)" i
-                              , "\n", "listToTuple", i', " ", incrementWord "[x]" i, " ="
-                              , "\n", "    ", incrementWord "(Just x)" i
-                              , "\n", "listToTuple", i', " _ = ", repeatWord "(Nothing)" i
+composeListToTuple i = concat [ "\n", "listToTuple", j, " :: [a] -> ", replicateEnclosed i "(Maybe a)"
+                              , "\n", "listToTuple", j, " ", incrementEnclosed i "[x]", " ="
+                              , "\n", "    ", incrementEnclosed i "(Just x)"
+                              , "\n", "listToTuple", j, " _ = ", replicateEnclosed i "(Nothing)"
                               , "\n\n" ]
-                              where i' = show i
+                              where j = show i
 
 appendListToTuple :: FilePath -> IO ()
 appendListToTuple path = mapM_ (\i -> appendFile path (composeListToTuple i)) [2..64]  -- 2 to 64 
 
 
 composeTupleToList :: Int -> String
-composeTupleToList i = concat [ "\n", "tupleToList", i', " :: ", incrementWord "(Show x)" i
-                              , "\n                 => ", incrementWord "(x)" i, " -> [Maybe String]"
-                              , "\n", "tupleToList", i', " ", incrementWord "(x)" i, " ="
-                              , "\n", "    ", incrementWord "[readS x]" i
+composeTupleToList i = concat [ "\n", "tupleToList", j, " :: ", incrementEnclosed i "(Show x)"
+                              , "\n                 => ", incrementEnclosed i "(x)", " -> [Maybe String]"
+                              , "\n", "tupleToList", j, " ", incrementEnclosed i "(x)", " ="
+                              , "\n", "    ", incrementEnclosed i "[readS x]"
                               , "\n\n" ]
-                              where i' = show i
+                              where j = show i
 
 
 appendTupleToList :: FilePath -> IO ()
@@ -114,14 +120,14 @@ appendTupleToList path = mapM_ (\i -> appendFile path (composeTupleToList i)) [2
 -- | for postgresql-simple ToField instance declaration
 composeField :: Int -> Int -> String
 composeField fieldnum i = concat
-                      [ "\n-- | Field", fieldstr, "_", i'
-                      , "\ninstance Field", fieldstr, " ", incrementWord "(x)" i, " "
-                      , replacex $ incrementWord "(x)" i, " ", xn, " ", xn', " where"
-                      , "\n    _", fieldstr, " k ~", incrementWord "(x)" i, " ="
+                      [ "\n-- | Field", fieldstr, "_", j
+                      , "\ninstance Field", fieldstr, " ", incrementEnclosed i "(x)", " "
+                      , replacex $ incrementEnclosed i "(x)", " ", xn, " ", xn', " where"
+                      , "\n    _", fieldstr, " k ~", incrementEnclosed i "(x)", " ="
                       , "\n        ", "k ", xn, " <&> \\", xn', " -> "
-                      , replacex $ incrementWord "(x)" i
+                      , replacex $ incrementEnclosed i "(x)"
                       , "\n\n" ]
-                      where i' = show i
+                      where j = show i
                             fieldstr = show fieldnum
                             xn = "x" ++ fieldstr
                             xn'= xn ++ "\'"

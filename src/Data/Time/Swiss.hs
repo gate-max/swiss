@@ -4,7 +4,7 @@ module Data.Time.Swiss (
     dayToUnixtime,
     exchangeHolidays,
     federalHolidays,
-    fg,
+    
     getDay, getMonth, getToday, getTradingDay, getTradingDayUTC, getYear,
     holidayChristmas, holidayColumbus, holidayGoodFriday, holidayIndependence, holidayLabor, holidayMartinLuther,
     holidayMemorial, holidayNewYears, holidayThanksgiving, holidayVeterans,
@@ -12,6 +12,7 @@ module Data.Time.Swiss (
     isWednesday, isThursday, isFriday, isSaturday, isSunday, isMonday, isTuesday,
     isWeekday, isWeeklyClose,
     lastTuesday, lastMonday, lastSunday, lastSaturday, lastFriday, lastThursday, lastWednesday,
+    mkDay,
     nextTradingDay,
     nextWednesday, nextTuesday, nextMonday, nextSunday, nextSaturday, nextFriday, nextThursday,
     notExchangeHoliday, notFederalHoliday, notTradingDay,
@@ -39,11 +40,11 @@ addTradingDays n day
   | n > 0 = nextTradingDay $ addTradingDays (n - 1) day 
   | otherwise = previousTradingDay $ addTradingDays (n + 1) day  -- n < 0
 
--- | > dayToString (fromGregorian 2016 3 14) --> "20160314"
+-- | > dayToString (mkDay 2016 3 14) --> "20160314"
 dayToStr :: Day -> String
 dayToStr = filter (isDigit) . show
 
--- | diffDays (fromGregorian 1970 1 1) (fromGregorian 1858 11 17) is 40587; 1 day has 86400 seconds
+-- | diffDays (mkDay 1970 1 1) (mkDay 1858 11 17) is 40587; 1 day has 86400 seconds
 -- compare: unixtimeToDay
 dayToUnixtime :: Day -> Integer
 dayToUnixtime day = (toModifiedJulianDay day - 40587) * 86400
@@ -59,16 +60,14 @@ exchangeHolidays year = federalHolidays year ++ [holidayGoodFriday year]
 -- https://www.opm.gov/policy-data-oversight/snow-dismissal-procedures/federal-holidays/
 federalHolidays :: Integer -> [Day]
 federalHolidays year
-  | nextYearJan1isSat = thisYearFederalHolidays ++ [fg year 12 31] 
+  | nextYearJan1isSat = thisYearFederalHolidays ++ [mkDay year 12 31] 
   | otherwise         = thisYearFederalHolidays  
-  where nextYearJan1isSat = isSaturday $ fg (year + 1) 1 1 
+  where nextYearJan1isSat = isSaturday $ mkDay (year + 1) 1 1 
         thisYearFederalHolidays =  [holidayNewYears year, holidayMartinLuther year, holidayWashington year
             , holidayMemorial year, holidayIndependence year, holidayLabor year
             , holidayColumbus year, holidayVeterans year, holidayThanksgiving year, holidayChristmas year]
 
 
-fg :: Integer -> Int -> Int -> Day
-fg = fromGregorian
   
 getDay :: Day -> Int
 getDay day = d where (_,_,d) = toGregorian day
@@ -99,17 +98,17 @@ getYear day = y where (y,_,_) = toGregorian day
 holidayNewYears :: Integer -> Day
 holidayNewYears year
   | isSaturday jan1 = pred $ jan1
-  | isSunday jan1   = fromGregorian year 1 2
+  | isSunday jan1   = mkDay year 1 2
   | otherwise       = jan1
-  where jan1 = fromGregorian year 1 1
+  where jan1 = mkDay year 1 1
   
 -- | Martin Luther Day is the third Monday in January
 holidayMartinLuther :: Integer -> Day
-holidayMartinLuther year = nextMonday (fromGregorian year 1 14)
+holidayMartinLuther year = nextMonday (mkDay year 1 14)
 
 -- | Presidents' Day is the third Monday in February
 holidayWashington :: Integer -> Day
-holidayWashington year  = nextMonday (fromGregorian year 2 14)
+holidayWashington year  = nextMonday (mkDay year 2 14)
 
 -- | Good Friday is observed by CME, though it is not a US Federal Holiday
 holidayGoodFriday :: Integer -> Day
@@ -118,43 +117,43 @@ holidayGoodFriday year = lastFriday $ gregorianEaster year
 
 -- | Memorial Day is the last Monday in May
 holidayMemorial :: Integer -> Day
-holidayMemorial year  = lastMonday (fromGregorian year 6 1)
+holidayMemorial year  = lastMonday (mkDay year 6 1)
 
 -- | Independence Day is fixed at July 4th
 holidayIndependence :: Integer -> Day
 holidayIndependence year
-  | isSaturday july4 = fromGregorian year 7 3
-  | isSunday july4   = fromGregorian year 7 5
+  | isSaturday july4 = mkDay year 7 3
+  | isSunday july4   = mkDay year 7 5
   | otherwise        = july4
-  where july4 = fromGregorian year 7 4
+  where july4 = mkDay year 7 4
   
 -- | Labor Day is the first Monday in September
 holidayLabor :: Integer -> Day
-holidayLabor year  = nextMonday (fromGregorian year 8 31)
+holidayLabor year  = nextMonday (mkDay year 8 31)
 
 -- | Columbus Day is the second Monday in October
 holidayColumbus :: Integer -> Day
-holidayColumbus year  = nextMonday (fromGregorian year 10 7)
+holidayColumbus year  = nextMonday (mkDay year 10 7)
 
 -- | Veterans Day is fixed at November 11th
 holidayVeterans :: Integer -> Day
 holidayVeterans year
-  | isSaturday nov11 = fromGregorian year 11 10
-  | isSunday nov11   = fromGregorian year 11 12
+  | isSaturday nov11 = mkDay year 11 10
+  | isSunday nov11   = mkDay year 11 12
   | otherwise        = nov11
-  where nov11 = fromGregorian year 11 11
+  where nov11 = mkDay year 11 11
   
 -- | Thanksgiving Day is the fourth Thursday in November
 holidayThanksgiving :: Integer -> Day
-holidayThanksgiving year  = nextThursday (fromGregorian year 11 21)
+holidayThanksgiving year  = nextThursday (mkDay year 11 21)
 
 -- | Christmas Day is fixed at December 25th
 holidayChristmas :: Integer -> Day
 holidayChristmas year
-  | isSaturday dec25 = fromGregorian year 12 24
-  | isSunday dec25   = fromGregorian year 12 26
+  | isSaturday dec25 = mkDay year 12 24
+  | isSunday dec25   = mkDay year 12 26
   | otherwise        = dec25
-  where dec25 = fromGregorian year 12 25
+  where dec25 = mkDay year 12 25
 
 
 
@@ -194,6 +193,11 @@ lastTuesday,lastMonday,lastSunday,lastSaturday,lastFriday,lastThursday,lastWedne
     where lastDay :: Integer -> Day -> Day
           lastDay i day =  addDays ((negate $ (toModifiedJulianDay day + i) `mod` 7) - 1) day
 
+
+mkDay :: Integer -> Int -> Int -> Day
+mkDay = fromGregorian
+
+
 nextTradingDay :: Day -> Day
 nextTradingDay day
   | isTradingDay tomorrow = tomorrow  
@@ -222,7 +226,7 @@ notTradingDay :: Day -> Bool
 notTradingDay = not . isTradingDay 
 
 notWednesday, notThursday, notFriday, notSaturday, notSunday, notMonday, notTuesday :: Day -> Bool
-[notWednesday,notThursday,notFriday,notSaturday,notSunday,notMonday,notTuesday] = [notDay i | i <- [0 .. 6]]
+[notWednesday, notThursday, notFriday, notSaturday, notSunday, notMonday, notTuesday] = [notDay i | i <- [0 .. 6]]
     where notDay :: Integer -> Day -> Bool
           notDay i day = toModifiedJulianDay day `mod` 7 /= i
 
@@ -244,7 +248,7 @@ previousTradingDay day
   where yesterday = pred day
 
 -- | compare showGregorian
--- > dayToString (fromGregorian 2016 3 14) --> "20160314"
+-- > dayToString (mkDay 2016 3 14) --> "20160314"
 showGreg :: Day -> String
 showGreg = filter (isDigit) . show
 
@@ -292,6 +296,6 @@ timerPure = timerIO . print
 -- 1 day has 86400 seconds
 -- see also dayToUnixtime function
 unixtimeToDay :: Integer -> Day
-unixtimeToDay i = addDays (i `div` 86400) (fromGregorian 1970 1 1) 
+unixtimeToDay i = addDays (i `div` 86400) (mkDay 1970 1 1) 
 
 
